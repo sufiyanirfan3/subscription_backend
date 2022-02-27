@@ -61,7 +61,9 @@ const Admin = db.define(
             notNull: {
                msg: "Please enter your phone no"
             },
-            isNumeric: true
+            isNumeric:{
+               msg: "Phone no can only contain numbers"
+            }
          }
       },
 

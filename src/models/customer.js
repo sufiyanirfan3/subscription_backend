@@ -46,16 +46,20 @@ const Customer = db.define('customer', {
             notNull: {
                msg: "Please enter your phone no"
             },
-            isNumeric: true
+            isNumeric:{
+               msg: "Phone no can only contain numbers"
+            }
          }
       },
 
       CNIC: {
-         type: DataTypes.INTEGER(20),
+         type: DataTypes.BIGINT(20),
          allowNull: true,
          unique: true,
          validate: {
-            isNumeric: true, 
+            isNumeric:{
+               msg: "CNIC no can only contain numbers"
+            },
             len: {
                 args: [11,11],
                 msg: "CNIC no must be 11 characters long"

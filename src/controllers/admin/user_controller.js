@@ -4,7 +4,10 @@ const User = require('../../models/user')
 const addUser=async(req,res)=>{
     let info={
         Username:req.body.Username,
-        Password:req.body.Password
+        Email:req.body.Email,
+        Password:req.body.Password,
+        PhoneNo:req.body.PhoneNo,
+        CNIC:req.body.CNIC
     }
     const user = await User.create(info)
     res.status(200).send(user)
@@ -19,7 +22,7 @@ const getUsers=async(req,res)=>{
 // get user by id
 const getUserById=async(req,res)=>{
     let id=req.params.id
-    let user=await User.findOne({ where:{id:id} })
+    let user=await User.findOne({ where:{PKUserId:id} })
     res.status(200).send(user)
 
 }
@@ -27,14 +30,14 @@ const getUserById=async(req,res)=>{
 // update user
 const updateUser=async(req,res)=>{
     let id=req.params.id
-    const user=await User.update(req.body, { where:{id:id} })
+    const user=await User.update(req.body, { where:{PKUserId:id} })
     res.status(200).send(user)
 }
 
 // delete user
 const deleteUser=async(req,res)=>{
     let id=req.params.id
-    await User.destroy({ where:{id:id} })
+    await User.destroy({ where:{PKUserId:id} })
     res.status(200).send("User is deleted")
 
 }

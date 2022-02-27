@@ -1,15 +1,19 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../../../config/database')
-const Admin = require('../../models/admin');
+
+const adminController=require("../../controllers/admin/admin_controller")
+
+router.post('/addAdmin',adminController.addAdmin)
+
+router.get('/getAdmins',adminController.getAdmins)
+
+router.get('/getAdminById/:id',adminController.getAdminById)
+
+router.put('/updateAdmin/:id',adminController.updateAdmin)
+
+router.delete('/deleteAdmin/:id',adminController.deleteAdmin)
 
 
-// Get gig list
-router.get('/', (req, res) => 
-  Admin.findAll()
-    .then(admin => {
-        console.log(admin)
-      })
-    .catch(err => res.render('error', {error: err})));
+
 
 module.exports=router

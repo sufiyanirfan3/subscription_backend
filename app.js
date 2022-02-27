@@ -10,6 +10,7 @@ app.use(cors());
 
 app.use("/admin", require("./src/routes/admin/admin_route"));
 app.use("/user", require("./src/routes/admin/user_route"));
+app.use("/customer", require("./src/routes/public/customer_route"));
 
 // Test DB
 db.authenticate()
