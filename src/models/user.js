@@ -27,6 +27,17 @@ const User = db.define('user', {
          }
       },
 
+      Email: {
+         type: DataTypes.STRING(100),
+         allowNull: true,
+         unique: true,
+         validate: {
+            isEmail: {
+               msg: "Email address must be valid"
+            }
+         }
+      },
+
       Password: {
          type: DataTypes.STRING(50),
          allowNull: false,
@@ -39,7 +50,34 @@ const User = db.define('user', {
                 msg: "Password must be between 8 and 50 characters in length"
             },
          }
+      },
+
+      PhoneNo: {
+         type: DataTypes.BIGINT(20),
+         allowNull: false,
+         unique: true,
+         validate: {
+            notNull: {
+               msg: "Please enter your phone no"
+            },
+            isNumeric: true
+         }
+      },
+
+      CNIC: {
+         type: DataTypes.BIGINT(20),
+         allowNull: true,
+         unique: true,
+         validate: {
+            isNumeric: true, 
+            len: {
+                args: [11,11],
+                msg: "CNIC no must be 11 characters long"
+            },
+         }
       }
+
+
    
 });
 User.sync().then(() => {

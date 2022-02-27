@@ -1,16 +1,15 @@
 const {sequelize,DataTypes} = require('sequelize');
 const db = require('../../config/database');
 
-const Admin = db.define(
-   "admin",
-   {
-      PKAdminId: {
+const Customer = db.define('customer', {
+
+      PKCustomerId: {
          type: DataTypes.INTEGER,
          primaryKey: true,
          unique: true,
          autoIncrement: true
       },
-
+      
       Username: {
          type: DataTypes.STRING(20),
          allowNull: false,
@@ -19,11 +18,11 @@ const Admin = db.define(
             notNull: {
                msg: "Please enter your username"
             },
-            isAlphanumeric: {
-               msg: "Username can only contain letters and numbers"
+            isAlphanumeric:{
+                msg: "Username can only contain letters and numbers"
             },
             len: {
-               args: [4, 20],
+                args: [4,20],
             },
          }
       },
@@ -39,20 +38,6 @@ const Admin = db.define(
          }
       },
 
-      Password: {
-         type: DataTypes.STRING(50),
-         allowNull: false,
-         validate: {
-            notNull: {
-               msg: "Please enter your password"
-            },
-            len: {
-               args: [8, 50],
-               msg: "Password must be between 8 and 50 characters in length"
-            },
-         }
-      },
-      
       PhoneNo: {
          type: DataTypes.BIGINT(20),
          allowNull: false,
@@ -65,11 +50,25 @@ const Admin = db.define(
          }
       },
 
-   });
+      CNIC: {
+         type: DataTypes.INTEGER(20),
+         allowNull: true,
+         unique: true,
+         validate: {
+            isNumeric: true, 
+            len: {
+                args: [11,11],
+                msg: "CNIC no must be 11 characters long"
+            },
+         }
+      }
 
-   Admin.sync().then(() => {
-      console.log('table created');
-    });
 
-module.exports = Admin;
+   
+});
+Customer.sync().then(() => {
+   console.log('table created');
+ });
+ module.exports = Customer;
 
+    
