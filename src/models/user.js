@@ -84,7 +84,7 @@ const User = db.define('user', {
 
 
 });
-User.sync().then(() => {
+User.sync({force:true}).then(() => {
    console.log('table created');
 });
 module.exports = User;

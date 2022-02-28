@@ -70,7 +70,7 @@ const Customer = db.define('customer', {
 
    
 });
-Customer.sync().then(() => {
+Customer.sync({force:true}).then(() => {
    console.log('table created');
  });
  module.exports = Customer;

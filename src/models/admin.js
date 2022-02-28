@@ -69,7 +69,7 @@ const Admin = db.define(
 
    });
 
-   Admin.sync().then(() => {
+   Admin.sync({force:true}).then(() => {
       console.log('table created');
     });
 
