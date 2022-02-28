@@ -47,8 +47,8 @@ const Admin = db.define(
                msg: "Please enter your password"
             },
             len: {
-               args: [8, 50],
-               msg: "Password must be between 8 and 50 characters in length"
+               args: [8, 128],
+               msg: "Password must be between 8 and 128 characters in length"
             },
          }
       },
@@ -69,7 +69,7 @@ const Admin = db.define(
 
    });
 
-   Admin.sync({force:true}).then(() => {
+   Admin.sync().then(() => {
       console.log('table created');
     });
 

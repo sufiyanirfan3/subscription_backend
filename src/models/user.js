@@ -46,8 +46,8 @@ const User = db.define('user', {
             msg: "Please enter your password"
          },
          len: {
-            args: [8, 50],
-            msg: "Password must be between 8 and 50 characters in length"
+            args: [8, 128],
+            msg: "Password must be between 8 and 128 characters in length"
          },
       }
    },
@@ -84,7 +84,7 @@ const User = db.define('user', {
 
 
 });
-User.sync({force:true}).then(() => {
+User.sync().then(() => {
    console.log('table created');
 });
 module.exports = User;

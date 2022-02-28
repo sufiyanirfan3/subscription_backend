@@ -24,16 +24,23 @@ const adminSignIn = async (req, res) => {
 
 // add admin
 const addAdmin = async (req, res) => {
-    const hashPass = await bcrypt.hash(req.body.Password, 4)
-    let info = {
-        Username: req.body.Username,
-        Email: req.body.Email,
-        Password: hashPass,
-        PhoneNo: req.body.PhoneNo,
-
+    if(req.body.Password.length<=8){
+        res.status(403).send("Password must be greater than 8 characters")
     }
-    const admin = await Admin.create(info)
-    res.status(200).send(admin)
+    else{
+
+        let info = {
+            Username: req.body.Username,
+            Email: req.body.Email,
+            Password: req.body.Password,
+            PhoneNo: req.body.PhoneNo,
+            
+        }
+        const hashPass = await bcrypt.hash(info.Password, 4)
+        info.Password=hashPass
+        const admin = await Admin.create(info)
+        res.status(200).send(admin)
+    }
 }
 
 // get all admins
