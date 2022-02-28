@@ -1,17 +1,19 @@
 const User = require('../../models/user')
 
 // add user
-const addUser=async(req,res)=>{
-    let info={
-        Username:req.body.Username,
-        Email:req.body.Email,
-        Password:req.body.Password,
-        PhoneNo:req.body.PhoneNo,
+const addUser = async (req, res) => {
+    const hashPass = await bcrypt.hash(req.body.Password, 4)
+    let info = {
+        Username: req.body.Username,
+        Email: req.body.Email,
+        Password: hashPass,
+        PhoneNo: req.body.PhoneNo,
         CNIC:req.body.CNIC
     }
     const user = await User.create(info)
     res.status(200).send(user)
 }
+
 
 // get all users
 const getUsers=async(req,res)=>{
