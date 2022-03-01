@@ -15,7 +15,6 @@ router.put('/updateAdmin/:id',adminController.updateAdmin)
 
 router.delete('/deleteAdmin/:id',adminController.deleteAdmin)
 
-
-
+router.post('/changePassword',adminController.changePassword)
 
 module.exports=router
