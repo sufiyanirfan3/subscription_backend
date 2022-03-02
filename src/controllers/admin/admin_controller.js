@@ -79,38 +79,46 @@ const deleteAdmin = async (req, res) => {
 
 // change password
 const changePassword = async (req, res) => {
-    let adminId = req.body.PKAdminId;
-    let admin = await Admin.findOne({ where: { PKAdminId: adminId } })
-    console.log(admin.Password);
-    let oldPassword = req.body.oldPassword;
-    let newPassword = req.body.newPassword;
-    let retypeNewPassword = req.body.retypeNewPassword;
+    let x = true;
+    const adminId = req.body.PKAdminId;
+    const admin = await Admin.findOne({ where: { PKAdminId: adminId } })
+    const oldPassword = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+    const retypeNewPassword = req.body.retypeNewPassword;
 
     if (!oldPassword) { res.status(400).send("Please enter your old password") }
     if (!newPassword) { res.status(400).send("Please enter your new password") }
     if (!retypeNewPassword) { res.status(400).send("Please retype your new password") }
 
     if (newPassword.length <= 8) {
+        x = false;
         res.status(400).send("Password must be greater than 8 characters")
+
     }
 
     if (newPassword !== retypeNewPassword) {
+        x = false;
         res.status(400).send("Passwords donot match!!")
     }
 
     const passwordMatches = await bcrypt.compare(oldPassword, admin.Password);
     if (!passwordMatches) {
+        x = false;
         res.status(400).send("Old password is incorrect")
     }
-    if(oldPassword===newPassword){
+
+    const samePassword = await bcrypt.compare(newPassword, admin.Password);
+    if (samePassword) {
+        x = false;
         res.status(400).send("Old password cannot be same as new password")
     }
 
-    
-    admin.Password = await bcrypt.hash(newPassword, 8);
+    if (x) {
+        admin.Password = await bcrypt.hash(newPassword, 8);
+        await admin.save();
+        res.status(200).send("Password is changed successfully")
+    }
 
-    await admin.save();
-    res.status(200).send("Success")
 }
 
 module.exports = {

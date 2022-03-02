@@ -17,4 +17,5 @@ router.delete('/deleteAdmin/:id',adminController.deleteAdmin)
 
 router.post('/changePassword',adminController.changePassword)
 
+
 module.exports=router

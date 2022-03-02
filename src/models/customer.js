@@ -66,7 +66,7 @@ const Customer = db.define('customer', {
             },
          }
       }
-
+//Address, Country, City, Area (required)
 
    
 });

@@ -10,7 +10,8 @@ const Admin = db.define(
          unique: true,
          autoIncrement: true
       },
-
+      // first name
+      //last name
       Username: {
          type: DataTypes.STRING(20),
          allowNull: false,
@@ -53,7 +54,7 @@ const Admin = db.define(
          }
       },
       
-      PhoneNo: {
+      PhoneNumber: {
          type: DataTypes.BIGINT(20),
          allowNull: false,
          unique: true,
