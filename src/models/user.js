@@ -107,8 +107,34 @@ const User = db.define('user', {
             msg: "CNIC no must be 11 characters long"
          },
       }
-   }
+   },
 
+   IsSuspended: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+   },
+
+   SuspendedDate: {
+      type: DataTypes.DATE
+   },
+
+   IsTemporarySuspended: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+   },
+
+   TemporarySuspendedDate: {
+      type: DataTypes.DATE
+   },
+
+   IsDeleted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+   },
+
+   DeletedDate: {
+      type: DataTypes.DATE
+   }
 
 
 });

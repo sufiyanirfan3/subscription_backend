@@ -35,11 +35,6 @@ const Subscription = db.define(
 
         },
 
-        deletedAt: {
-            allowNull: false,
-            type: DataTypes.DATE
-        },
-
     });
 
 Subscription.sync().then(() => {
