@@ -15,7 +15,6 @@ const addUser = async (req, res) => {
     res.status(200).send(user)
 }
 
-
 // get all users
 const getUsers=async(req,res)=>{
     let users=await User.findAll({})

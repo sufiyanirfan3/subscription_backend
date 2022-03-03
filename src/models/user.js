@@ -9,8 +9,35 @@ const User = db.define('user', {
       unique: true,
       autoIncrement: true
    },
-//first name
-//last name
+
+   FirstName: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      unique: false,
+      validate: {
+         notNull: {
+            msg: "Please enter your firstname"
+         },
+         isAlpha: {
+            msg: "Firstname can only contain letters"
+         }
+      }
+   },
+
+   LastName: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      unique: false,
+      validate: {
+         notNull: {
+            msg: "Please enter your lastname"
+         },
+         isAlpha: {
+            msg: "Lastname can only contain letters"
+         }
+      }
+   },
+   
    Username: {
       type: DataTypes.STRING(20),
       allowNull: false,
