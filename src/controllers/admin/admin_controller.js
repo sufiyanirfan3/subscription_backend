@@ -30,7 +30,6 @@ const addAdmin = async (req, res) => {
         res.status(400).send("Password must be greater than 8 characters")
     }
     else {
-
         let info = {
             Username: req.body.Username,
             Email: req.body.Email,
