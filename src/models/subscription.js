@@ -37,7 +37,7 @@ const Subscription = db.define(
 
         deletedAt: {
             allowNull: false,
-            type: sequelize.DATE
+            type: DataTypes.DATE
         },
 
     });
