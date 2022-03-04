@@ -19,8 +19,20 @@ db.session = require("./session")(sequelize, DataTypes);
 
 db.user.hasMany(db.package, {
    onDelete: "cascade",
-   foreignKey: "FKCategoryId"
+   foreignKey: "FKUserId"
 });
 db.package.belongsTo(db.user)
+
+db.package.hasMany(db.subscription, {
+   onDelete: "cascade",
+   foreignKey: "FKPackageId"
+});
+db.subscription.belongsTo(db.package)
+
+db.subscription.hasOne(db.package, {
+   onDelete: "cascade",
+   foreignKey: "FKSubscriptionId"
+});
+
 
 module.exports = db;
