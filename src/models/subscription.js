@@ -16,8 +16,7 @@ module.exports = (sequelize, DataTypes) => {
                 //  unique: true,
                 //  autoIncrement: true
             },
-            // first name
-            //last name
+            
             FKPackageID: {
                 type: DataTypes.STRING(20),
                 //  allowNull: false,

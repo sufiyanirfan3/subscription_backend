@@ -88,8 +88,7 @@ const adminSignIn = async (req, res) => {
     const admin = await Admin.findOne({ where: { Username: username } })
 
     if (admin) {
-        console.log(req.body.Password)
-        console.log(admin.Password)
+
         let checkPass = await bcrypt.compare(req.body.Password, admin.Password)
 
         if (checkPass) {
@@ -109,7 +108,7 @@ const adminSignIn = async (req, res) => {
 
     }
     else {
-        res.send({ message: "No user is registered with this username" }).status(403)
+        res.send({ message: "No admin is registered with this username" }).status(403)
     }
 }
 
