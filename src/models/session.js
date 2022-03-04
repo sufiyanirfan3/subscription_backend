@@ -1,7 +1,7 @@
 const { sequelize, DataTypes } = require('sequelize');
 const db = require('../../config/database');
 
-const Package = db.define('package', {
+const Session = db.define('session', {
 
     PKSessionId: {
         type: DataTypes.INTEGER,
@@ -24,9 +24,9 @@ const Package = db.define('package', {
 
 
 });
-Package.sync().then(() => {
+Session.sync().then(() => {
     console.log('table created');
 });
-module.exports = Package;
+module.exports = Session;
 
 

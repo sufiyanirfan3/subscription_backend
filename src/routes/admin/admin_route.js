@@ -3,9 +3,11 @@ const router = express.Router();
 
 const adminController=require("../../controllers/admin/admin_controller")
 
+router.post("/renewAccessToken", adminController.renewAccessToken);
+
 router.post('/adminSignIn',adminController.adminSignIn)
 
-router.post('/addAdmin',adminController.addAdmin)
+router.post('/addAdmin',adminController.authenticateAdmin,adminController.addAdmin)
 
 router.get('/getAdmins',adminController.getAdmins)
 

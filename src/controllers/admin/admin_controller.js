@@ -1,26 +1,115 @@
 const bcrypt = require('bcryptjs')
+const jwt = require("jsonwebtoken");
 const Admin = require('../../models/admin')
+const Session = require('../../models/session')
+
+// Authenticate Admin
+const authenticateAdmin = async (req, res, next) => {
+    try {
+        const count_admin = await Admin.count();
+        if (count_admin == 0) {
+            return next();
+        }
+
+        if (!req.header("Authorization")) {
+            return res.status(400).send("Pass the tokens in headers");
+        }
+        const accessToken = req.header('authorization').split(" ")[1];
+        const decodedToken = jwt.verify(accessToken, process.env.ACCESS_TOKEN);
+        const PKAdminId = decodedToken.PKAdminId;
+        const admin = await Admin.findOne({ where: { PKAdminId: PKAdminId } });
+        req.accessToken = accessToken;
+        req.admin = admin;
+        next();
+
+    } catch (e) {
+        res.status(400).send(e.message)
+    }
+}
+// Generate tokens
+async function generateAuthToken(PKAdminId) {
+    try {
+        const refreshToken = jwt.sign(
+            { PKAdminId: PKAdminId },
+            process.env.REFRESH_TOKEN,
+            {
+                expiresIn: 86400
+            }
+        );
+
+        const accessToken = jwt.sign(
+            { PKAdminId: PKAdminId },
+            process.env.ACCESS_TOKEN,
+            {
+                expiresIn: 3600
+            }
+        );
+        return {
+            refreshToken: refreshToken,
+            accessToken: accessToken
+        };
+    } catch (e) {
+        res.status(400).send(e.message);
+    }
+}
+// Renew access token
+const renewAccessToken = async (req, res) => {
+    try {
+        const refreshToken = await req.body.refreshToken;
+        if (!refreshToken) {
+            return res.status(400).send("Please enter refresh token in body");
+        }
+
+        const decodedToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN);
+        const activeAdmin = await Session.findOne({ where: { RefreshToken: refreshToken } });
+
+        if (!activeAdmin) {
+            return res.status(400).send("Refresh Token is invalid or has expired");
+        }
+
+        const PKAdminId = parseInt(decodedToken.PKAdminId, 10);
+        const admin = await Admin.findOne({ where: { PKAdminId: PKAdminId } });
+
+        if (!admin) {
+            res.status(400).send("Refresh Token is invalid or has expired");
+        }
+
+        const newAccessToken = jwt.sign({ PKAdminId: PKAdminId }, process.env.ACCESS_TOKEN, { expiresIn: 3600 });
+        res.status(200).send({ newAccessToken: newAccessToken });
+    } catch (e) {
+        res.status(400).send(e.message);
+    }
+}
 
 // Admin SignIn
 const adminSignIn = async (req, res) => {
     let username = req.body.Username
 
-    let checkUser = await Admin.findOne({ where: { Username: username } })
+    const admin = await Admin.findOne({ where: { Username: username } })
 
-    if (checkUser) {
+    if (admin) {
         console.log(req.body.Password)
-        console.log(checkUser.Password)
-        let checkPass = await bcrypt.compare(req.body.Password, checkUser.Password)
+        console.log(admin.Password)
+        let checkPass = await bcrypt.compare(req.body.Password, admin.Password)
 
         if (checkPass) {
-            res.send({ message: "Login Successful" }).status(200)
+            const tokens = await generateAuthToken(admin.PKAdminId);
+            const refreshToken = tokens.refreshToken;
+            const session = await Session.build({
+                FKAdminId: admin.PKAdminId,
+                RefreshToken: refreshToken
+            });
+            await session.save();
+            res.status(200).json({ message: "Login Succesful", tokens: tokens });
         }
         else {
             res.send({ message: "Your password is incorrect", value: checkPass, user: checkUser }).status(403)
         }
+
+
     }
     else {
-        res.send({ message: "No user is registered with this email" }).status(403)
+        res.send({ message: "No user is registered with this username" }).status(403)
     }
 }
 
@@ -31,8 +120,8 @@ const addAdmin = async (req, res) => {
     }
     else {
         let info = {
-            FirstName:req.body.FirstName,
-            LastName:req.body.LastName,
+            FirstName: req.body.FirstName,
+            LastName: req.body.LastName,
             Username: req.body.Username,
             Email: req.body.Email,
             Password: req.body.Password,
@@ -63,7 +152,7 @@ const getAdminById = async (req, res) => {
 // update admin
 const updateAdmin = async (req, res) => {
     let id = req.params.id
-    if (req.body.Username || req.body.Email || req.body.Password){
+    if (req.body.Username || req.body.Email || req.body.Password) {
         delete (req.body.Username)
         delete (req.body.Email)
         delete (req.body.Password)
@@ -125,6 +214,9 @@ const changePassword = async (req, res) => {
 }
 
 module.exports = {
+    authenticateAdmin,
+    generateAuthToken,
+    renewAccessToken,
     adminSignIn,
     addAdmin,
     getAdmins,
