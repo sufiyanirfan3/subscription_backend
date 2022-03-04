@@ -31,10 +31,12 @@ const addAdmin = async (req, res) => {
     }
     else {
         let info = {
+            FirstName:req.body.FirstName,
+            LastName:req.body.LastName,
             Username: req.body.Username,
             Email: req.body.Email,
             Password: req.body.Password,
-            PhoneNo: req.body.PhoneNo,
+            PhoneNumber: req.body.PhoneNumber,
 
         }
         const hashPass = await bcrypt.hash(info.Password, 8)
@@ -61,7 +63,9 @@ const getAdminById = async (req, res) => {
 // update admin
 const updateAdmin = async (req, res) => {
     let id = req.params.id
-    if (req.body.Password) {
+    if (req.body.Username || req.body.Email || req.body.Password){
+        delete (req.body.Username)
+        delete (req.body.Email)
         delete (req.body.Password)
     }
     const admin = await Admin.update(req.body, { where: { PKAdminId: id } })

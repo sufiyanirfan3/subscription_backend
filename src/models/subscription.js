@@ -35,6 +35,9 @@ const Subscription = db.define(
 
         },
 
+        DeletedDate: {
+            type: DataTypes.DATE
+         }
     });
 
 Subscription.sync().then(() => {

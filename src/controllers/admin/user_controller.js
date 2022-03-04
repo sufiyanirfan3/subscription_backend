@@ -8,10 +8,12 @@ const addUser = async (req, res) => {
     }
     else {
         let info = {
+            FirstName:req.body.FirstName,
+            LastName:req.body.LastName,
             Username: req.body.Username,
             Email: req.body.Email,
             Password: req.body.Password,
-            PhoneNo: req.body.PhoneNo,
+            PhoneNumber: req.body.PhoneNumber,
             CNIC: req.body.CNIC
         }
 
