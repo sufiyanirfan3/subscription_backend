@@ -13,11 +13,11 @@ router.get('/getAdmins',adminController.getAdmins)
 
 router.get('/getAdminById/:id',adminController.getAdminById)
 
-router.put('/updateAdmin/:id',adminController.updateAdmin)
+router.put('/updateAdmin/:id',adminController.authenticateAdmin,adminController.updateAdmin)
 
-router.delete('/deleteAdmin/:id',adminController.deleteAdmin)
+router.delete('/deleteAdmin/:id',adminController.authenticateAdmin,adminController.deleteAdmin)
 
-router.post('/changePassword',adminController.changePassword)
+router.post('/changePassword',adminController.authenticateAdmin,adminController.changePassword)
 
 
 module.exports=router

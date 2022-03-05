@@ -1,5 +1,5 @@
 
-const Subscription = require('../../models/subscription')
+const Subscription = require('../../models').subscription
 
 // add subscription
 const addSubscription = async (req, res) => {
