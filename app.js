@@ -1,6 +1,7 @@
 const dotenv = require("dotenv")
 dotenv.config();
 const db = require('./config/database');
+const {sequelize}=require("./src/models")
 const express = require('express');
 const cors = require("cors");
 
@@ -27,3 +28,13 @@ app.get("/", (req, res) => {
 app.listen(process.env.PORT, () => {
     console.log(`listening on port ${process.env.PORT}...`);
 });
+
+
+
+sequelize.sync().then(() => {
+    console.log("Tables created successfully")
+ })
+ .catch((e) => {
+    console.log({ error: e.message });
+ });
+ 

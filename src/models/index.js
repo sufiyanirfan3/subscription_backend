@@ -29,10 +29,11 @@ db.package.hasMany(db.subscription, {
 });
 db.subscription.belongsTo(db.package)
 
-db.subscription.hasOne(db.package, {
-   onDelete: "cascade",
-   foreignKey: "FKSubscriptionId"
-});
+// db.subscription.hasOne(db.package, {
+//    onDelete: "cascade",
+//    foreignKey: "FKSubscriptionId"
+// });
+
 
 
 module.exports = db;
