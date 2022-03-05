@@ -21,19 +21,19 @@ db.user.hasMany(db.package, {
    onDelete: "cascade",
    foreignKey: "FKUserId"
 });
-db.package.belongsTo(db.user)
+db.package.belongsTo(db.user,{
+   onDelete: "cascade"
+})
 
 db.package.hasMany(db.subscription, {
    onDelete: "cascade",
    foreignKey: "FKPackageId",
 });
-db.subscription.belongsTo(db.package)
+db.subscription.belongsTo(db.package,{
+   onDelete:"cascade"
+})
 
-// db.subscription.hasOne(db.package, {
-//    onDelete: "cascade",
-//    foreignKey: "FKSubscriptionId",
-//    constraints: false
-// });
+
 
 
 module.exports = db;
