@@ -147,10 +147,15 @@ const getUserById = async (req, res) => {
 }
 
 // update user
-const updateUser = async (req, res) => {
+const updateProfile = async (req, res) => {
     let id = req.params.id
+    if (req.body.Username || req.body.Email || req.body.Password) {
+        delete (req.body.Username)
+        delete (req.body.Email)
+        delete (req.body.Password)
+    }
     const user = await User.update(req.body, { where: { PKUserId: id } })
-    res.status(200).send(user)
+    res.status(200).send("Profile updated successfully")
 }
 
 // delete user
@@ -161,7 +166,69 @@ const deleteUser = async (req, res) => {
 
 }
 
+const changePassword = async (req, res) => {
+    let x = true;
+    const userId = req.body.PKUserId;
+    const user = await Admin.findOne({ where: { PKUserId: userId } })
+    const oldPassword = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+    const retypeNewPassword = req.body.retypeNewPassword;
 
+    if (!oldPassword) { res.status(400).send("Please enter your old password") }
+    if (!newPassword) { res.status(400).send("Please enter your new password") }
+    if (!retypeNewPassword) { res.status(400).send("Please retype your new password") }
+
+    if (newPassword.length <= 8) {
+        x = false;
+        res.status(400).send("Password must be greater than 8 characters")
+
+    }
+
+    if (newPassword !== retypeNewPassword) {
+        x = false;
+        res.status(400).send("Passwords donot match!!")
+    }
+
+    const passwordMatches = await bcrypt.compare(oldPassword, user.Password);
+    if (!passwordMatches) {
+        x = false;
+        res.status(400).send("Old password is incorrect")
+    }
+
+    const samePassword = await bcrypt.compare(newPassword, user.Password);
+    if (samePassword) {
+        x = false;
+        res.status(400).send("Old password cannot be same as new password")
+    }
+
+    if (x) {
+        user.Password = await bcrypt.hash(newPassword, 8);
+        await user.save();
+        res.status(200).send("Password is changed successfully")
+    }
+
+}
+
+//Logout
+const logout = async(req,res)=>{
+    try {
+        const refreshToken = await req.body.refreshToken;
+        const decodedToken = jwt.verify(refreshToken,process.env.REFRESH_TOKEN);
+        const session = await Session.findOne({
+            where: {
+                RefreshToken: refreshToken,
+                FKUserId: decodedToken.PKUserId
+            }
+        });
+        if (!session) {
+            res.status(403).send("Invalid Refresh Token");
+        }
+        await session.destroy();
+        res.status(200).send("Successfully logged out ");
+    } catch (e) {
+        res.status(500).send(e.message);
+    }
+}
 
 module.exports = {
     authenticateUser,
@@ -171,6 +238,8 @@ module.exports = {
     addUser,
     getUsers,
     getUserById,
-    updateUser,
-    deleteUser
+    updateProfile,
+    deleteUser,
+    changePassword,
+    logout
 }

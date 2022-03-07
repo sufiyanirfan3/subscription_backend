@@ -95,7 +95,7 @@ const adminSignIn = async (req, res) => {
             const tokens = await generateAuthToken(admin.PKAdminId);
             const refreshToken = tokens.refreshToken;
             const session = await Session.build({
-                FKAdminId: admin.PKAdminId,
+                FKUserId: admin.PKAdminId,
                 RefreshToken: refreshToken
             });
             await session.save();
@@ -149,7 +149,7 @@ const getAdminById = async (req, res) => {
 }
 
 // update admin
-const updateAdmin = async (req, res) => {
+const updateProfile = async (req, res) => {
     let id = req.params.id
     if (req.body.Username || req.body.Email || req.body.Password) {
         delete (req.body.Username)
@@ -157,7 +157,7 @@ const updateAdmin = async (req, res) => {
         delete (req.body.Password)
     }
     const admin = await Admin.update(req.body, { where: { PKAdminId: id } })
-    res.status(200).send(admin)
+    res.status(200).send("Profile updated successfully")
 }
 
 // delete admin
@@ -212,6 +212,27 @@ const changePassword = async (req, res) => {
 
 }
 
+//Logout
+const logout = async(req,res)=>{
+    try {
+        const refreshToken = await req.body.refreshToken;
+        const decodedToken = jwt.verify(refreshToken,process.env.REFRESH_TOKEN);
+        const session = await Session.findOne({
+            where: {
+                RefreshToken: refreshToken,
+                FKUserId: decodedToken.PKAdminId
+            }
+        });
+        if (!session) {
+            res.status(403).send("Invalid Refresh Token");
+        }
+        await session.destroy();
+        res.status(200).send("Successfully logged out ");
+    } catch (e) {
+        res.status(500).send(e.message);
+    }
+}
+
 module.exports = {
     authenticateAdmin,
     generateAuthToken,
@@ -220,7 +241,8 @@ module.exports = {
     addAdmin,
     getAdmins,
     getAdminById,
-    updateAdmin,
+    updateProfile,
     deleteAdmin,
-    changePassword
+    changePassword,
+    logout
 }

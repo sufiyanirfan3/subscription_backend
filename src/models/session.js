@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true
         },
 
-        FKAdminId: {
+        FKUserId: {
             type: DataTypes.INTEGER,
             allowNull: false
         },

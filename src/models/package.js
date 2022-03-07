@@ -56,7 +56,6 @@ module.exports = (sequelize, DataTypes) => {
 
         FKSubscriptionId:{
             type: DataTypes.INTEGER,
-            // allowNull:true
         }
 
 

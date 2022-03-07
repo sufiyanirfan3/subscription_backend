@@ -13,40 +13,51 @@ const addPackage = async (req, res) => {
 }
 
 // get all packages
-const getPackages=async(req,res)=>{
-    let packages=await Package.findAll({})
+const getPackages = async (req, res) => {
+    let packages = await Package.findAll({})
     res.status(200).send(packages)
 }
 
 // get package by id
-const getPackageById=async(req,res)=>{
-    let id=req.params.id
-    let package=await Package.findOne({ where:{PKPackageId:id} })
+const getPackageById = async (req, res) => {
+    let id = req.params.id
+    let package = await Package.findOne({ where: { PKPackageId: id } })
     res.status(200).send(package)
 
 }
 
 // update package
-const updatePackage=async(req,res)=>{
-    let id=req.params.id
-    const package=await Package.update(req.body, { where:{PKPackageId:id} })
+const updatePackage = async (req, res) => {
+    let id = req.params.id
+    const package = await Package.update(req.body, { where: { PKPackageId: id } })
     res.status(200).send(package)
 }
 
 // delete package
-const deletePackage=async(req,res)=>{
-    let id=req.params.id
-    await Package.destroy({ where:{PKPackageId:id} })
+const deletePackage = async (req, res) => {
+    let id = req.params.id
+    await Package.destroy({ where: { PKPackageId: id } })
     res.status(200).send("Package is deleted")
 
 }
 
+//get packages by user id
+const getPackagesByUserId = async (req, res)=>{
+    try {
+        let id = req.params.PKUserId
+        let package = await Package.findOne({ where: { FKUserId: id } })
+        res.status(200).send(package)
 
+    }catch(e) {
+        res.status(500).send(e.message)
+    }
+}
 
-module.exports={
+module.exports = {
     addPackage,
     getPackages,
     getPackageById,
     updatePackage,
-    deletePackage
+    deletePackage,
+    getPackagesByUserId
 }
