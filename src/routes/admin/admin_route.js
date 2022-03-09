@@ -25,6 +25,9 @@ router.post('/changePassword',adminController.authenticateAdmin,adminController.
 
 router.post('/logout',adminController.authenticateAdmin,adminController.logout)
 
+
+
+
 //user
 router.post('/addUser',adminController.authenticateAdmin,userController.addUser)
 
@@ -32,7 +35,11 @@ router.get('/getUsers',adminController.authenticateAdmin,userController.getUsers
 
 router.get('/getUserById/:id',adminController.authenticateAdmin,userController.getUserById)
 
-router.delete('/deleteUser/:id',adminController.authenticateAdmin,userController.deleteUser)
+router.put('/suspendUser/:id',adminController.authenticateAdmin,userController.suspendUser)
+
+router.put('/temporarySuspendUser/:id',adminController.authenticateAdmin,userController.temporarySuspendUser)
+
+router.put('/deleteUser/:id',adminController.authenticateAdmin,userController.deleteUser)
 
 //package
 router.get('/getPackages',adminController.authenticateAdmin,packageController.getPackages)

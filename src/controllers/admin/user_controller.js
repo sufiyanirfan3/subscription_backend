@@ -134,14 +134,14 @@ const addUser = async (req, res) => {
 
 // get all users
 const getUsers = async (req, res) => {
-    let users = await User.findAll({})
+    let users = await User.findAll({IsDeleted: false})
     res.status(200).send(users)
 }
 
 // get user by id
 const getUserById = async (req, res) => {
     let id = req.params.id
-    let user = await User.findOne({ where: { PKUserId: id } })
+    let user = await User.findOne({ where: { PKUserId: id , IsDeleted: false } })
     res.status(200).send(user)
 
 }
@@ -154,15 +154,60 @@ const updateProfile = async (req, res) => {
         delete (req.body.Email)
         delete (req.body.Password)
     }
-    const user = await User.update(req.body, { where: { PKUserId: id } })
+    const user = await User.update(req.body, { where: { PKUserId: id , IsDeleted: false} })
     res.status(200).send("Profile updated successfully")
+}
+
+// suspend user
+const suspendUser = async (req, res) => {
+    try {
+        let id = req.params.id
+
+        const suspendUser = await User.update(
+           { IsSuspended: true, SuspendedDate: Date.now() },
+           { where: { PKUserId: id, IsSuspended: false } }
+        );
+        res.status(200).json("User suspended successfully")
+     } catch (e) {
+        res.status(400).send(e.message)
+     }
+    
+
+}
+
+// temporary suspend user
+const temporarySuspendUser = async (req, res) => {
+    try {
+        let id = req.params.id
+
+        const temporarySuspendUser = await User.update(
+           { IsTemporarySuspended: true, TemporarySuspendedDate: Date.now() },
+           { where: { PKUserId: id, IsTemporarySuspended: false } }
+        );
+        res.status(200).json("User temporary suspended successfully")
+     } catch (e) {
+        res.status(400).send(e.message)
+     }
+    
+    
+
 }
 
 // delete user
 const deleteUser = async (req, res) => {
-    let id = req.params.id
-    await User.destroy({ where: { PKUserId: id } })
-    res.status(200).send("User is deleted")
+    try {
+        let id = req.params.id
+
+        const deleteUser = await User.update(
+           { IsDeleted: true, DeletedDate: Date.now() },
+           { where: { PKUserId: id, IsDeleted: false } }
+        );
+        res.status(200).json("User deleted successfully")
+     } catch (e) {
+        res.status(400).send(e.message)
+     }
+    
+    
 
 }
 
@@ -230,6 +275,8 @@ const logout = async(req,res)=>{
     }
 }
 
+
+
 module.exports = {
     authenticateUser,
     generateAuthToken,
@@ -239,6 +286,8 @@ module.exports = {
     getUsers,
     getUserById,
     updateProfile,
+    suspendUser,
+    temporarySuspendUser,
     deleteUser,
     changePassword,
     logout

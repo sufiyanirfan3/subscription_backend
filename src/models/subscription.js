@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             FKCustomerID: {
                 type: DataTypes.INTEGER,
+                unique: 'compositeIndex'
                 //  primaryKey: true,
                 //  unique: true,
                 //  autoIncrement: true
@@ -19,12 +20,13 @@ module.exports = (sequelize, DataTypes) => {
             
             FKPackageID: {
                 type: DataTypes.STRING(20),
+                unique: 'compositeIndex'
                 //  allowNull: false,
                 //  unique: true,
 
 
             },
-            CompoundPK: {
+            PKSubscriptionId: {
                 type: DataTypes.STRING(50),
                 allowNull: false,
                 unique: true,

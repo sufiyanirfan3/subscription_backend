@@ -45,7 +45,7 @@ const deletePackage = async (req, res) => {
 const getPackagesByUserId = async (req, res)=>{
     try {
         let id = req.params.PKUserId
-        let package = await Package.findOne({ where: { FKUserId: id } })
+        let package = await Package.findAll({ where: { FKUserId: id } })
         res.status(200).send(package)
 
     }catch(e) {
