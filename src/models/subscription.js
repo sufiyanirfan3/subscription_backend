@@ -35,9 +35,14 @@ module.exports = (sequelize, DataTypes) => {
 
             },
 
-            DeletedDate: {
+            IsDeleted: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false
+             },
+       
+             DeletedDate: {
                 type: DataTypes.DATE
-            }
+             }
         });
     return Subscription
 }

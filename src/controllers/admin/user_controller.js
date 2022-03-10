@@ -80,82 +80,102 @@ const renewAccessToken = async (req, res) => {
 
 // user SignIn
 const userSignIn = async (req, res) => {
-    let username = req.body.Username
+    try {
+        let username = req.body.Username
 
-    const user = await User.findOne({ where: { Username: username } })
+        const user = await User.findOne({ where: { Username: username } })
 
-    if (user) {
+        if (user) {
 
-        let checkPass = await bcrypt.compare(req.body.Password, user.Password)
+            let checkPass = await bcrypt.compare(req.body.Password, user.Password)
 
-        if (checkPass) {
-            const tokens = await generateAuthToken(admin.PKUserId);
-            const refreshToken = tokens.refreshToken;
-            const session = await Session.build({
-                FKUserId: user.PKUserId,
-                RefreshToken: refreshToken
-            });
-            await session.save();
-            res.status(200).json({ message: "Login Succesful", tokens: tokens });
+            if (checkPass) {
+                const tokens = await generateAuthToken(admin.PKUserId);
+                const refreshToken = tokens.refreshToken;
+                const session = await Session.build({
+                    FKUserId: user.PKUserId,
+                    RefreshToken: refreshToken
+                });
+                await session.save();
+                res.status(200).json({ message: "Login Succesful", tokens: tokens });
+            }
+            else {
+                res.send({ message: "Your password is incorrect", value: checkPass, user: checkUser }).status(403)
+            }
+
+
         }
         else {
-            res.send({ message: "Your password is incorrect", value: checkPass, user: checkUser }).status(403)
+            res.send({ message: "No user is registered with this username" }).status(403)
         }
-
-
-    }
-    else {
-        res.send({ message: "No user is registered with this username" }).status(403)
+    } catch (e) {
+        res.status(400).send(e.message);
     }
 }
 
 // add user
 const addUser = async (req, res) => {
-    if (req.body.Password.length <= 8) {
-        res.status(400).send("Password must be greater than 8 characters")
-    }
-    else {
-        let info = {
-            FirstName:req.body.FirstName,
-            LastName:req.body.LastName,
-            Username: req.body.Username,
-            Email: req.body.Email,
-            Password: req.body.Password,
-            PhoneNumber: req.body.PhoneNumber,
-            CNIC: req.body.CNIC
+    try {
+        if (req.body.Password.length <= 8) {
+            res.status(400).send("Password must be greater than 8 characters")
         }
+        else {
+            let info = {
+                FirstName: req.body.FirstName,
+                LastName: req.body.LastName,
+                Username: req.body.Username,
+                Email: req.body.Email,
+                Password: req.body.Password,
+                PhoneNumber: req.body.PhoneNumber,
+                CNIC: req.body.CNIC
+            }
 
-        const hashPass = await bcrypt.hash(info.Password, 8)
-        info.Password = hashPass
-        const user = await User.create(info)
-        res.status(200).send(user)
+            const hashPass = await bcrypt.hash(info.Password, 8)
+            info.Password = hashPass
+            const user = await User.create(info)
+            res.status(200).send(user)
+        }
+    } catch (e) {
+        res.status(400).send(e.message);
     }
 }
 
 // get all users
 const getUsers = async (req, res) => {
-    let users = await User.findAll({IsDeleted: false})
-    res.status(200).send(users)
+    try {
+        let users = await User.findAll({ IsDeleted: false })
+        res.status(200).send(users)
+    } catch (e) {
+        res.status(400).send(e.message);
+    }
 }
 
 // get user by id
 const getUserById = async (req, res) => {
-    let id = req.params.id
-    let user = await User.findOne({ where: { PKUserId: id , IsDeleted: false } })
-    res.status(200).send(user)
+    try {
+        let id = req.params.id
+        let user = await User.findOne({ where: { PKUserId: id, IsDeleted: false } })
+        res.status(200).send(user)
+    } catch (e) {
+        res.status(400).send(e.message);
+    }
 
 }
 
 // update user
 const updateProfile = async (req, res) => {
-    let id = req.params.id
-    if (req.body.Username || req.body.Email || req.body.Password) {
-        delete (req.body.Username)
-        delete (req.body.Email)
-        delete (req.body.Password)
+    try {
+        let id = req.params.id
+        if (req.body.Username || req.body.Email || req.body.Password) {
+            delete (req.body.Username)
+            delete (req.body.Email)
+            delete (req.body.Password)
+        }
+        const user = await User.update(req.body, { where: { PKUserId: id, IsDeleted: false } })
+        res.status(200).send("Profile updated successfully")
+    } catch (e) {
+        res.status(400).send(e.message);
     }
-    const user = await User.update(req.body, { where: { PKUserId: id , IsDeleted: false} })
-    res.status(200).send("Profile updated successfully")
 }
 
 // suspend user
@@ -164,14 +184,14 @@ const suspendUser = async (req, res) => {
         let id = req.params.id
 
         const suspendUser = await User.update(
-           { IsSuspended: true, SuspendedDate: Date.now() },
-           { where: { PKUserId: id, IsSuspended: false } }
+            { IsSuspended: true, SuspendedDate: Date.now() },
+            { where: { PKUserId: id, IsSuspended: false } }
         );
         res.status(200).json("User suspended successfully")
-     } catch (e) {
+    } catch (e) {
         res.status(400).send(e.message)
-     }
-    
+    }
+
 
 }
 
@@ -181,15 +201,15 @@ const temporarySuspendUser = async (req, res) => {
         let id = req.params.id
 
         const temporarySuspendUser = await User.update(
-           { IsTemporarySuspended: true, TemporarySuspendedDate: Date.now() },
-           { where: { PKUserId: id, IsTemporarySuspended: false } }
+            { IsTemporarySuspended: true, TemporarySuspendedDate: Date.now() },
+            { where: { PKUserId: id, IsTemporarySuspended: false } }
         );
         res.status(200).json("User temporary suspended successfully")
-     } catch (e) {
+    } catch (e) {
         res.status(400).send(e.message)
-     }
-    
-    
+    }
+
+
 
 }
 
@@ -199,66 +219,69 @@ const deleteUser = async (req, res) => {
         let id = req.params.id
 
         const deleteUser = await User.update(
-           { IsDeleted: true, DeletedDate: Date.now() },
-           { where: { PKUserId: id, IsDeleted: false } }
+            { IsDeleted: true, DeletedDate: Date.now() },
+            { where: { PKUserId: id, IsDeleted: false } }
         );
         res.status(200).json("User deleted successfully")
-     } catch (e) {
+    } catch (e) {
         res.status(400).send(e.message)
-     }
-    
-    
+    }
+
+
 
 }
 
 const changePassword = async (req, res) => {
-    let x = true;
-    const userId = req.body.PKUserId;
-    const user = await Admin.findOne({ where: { PKUserId: userId } })
-    const oldPassword = req.body.oldPassword;
-    const newPassword = req.body.newPassword;
-    const retypeNewPassword = req.body.retypeNewPassword;
+    try {
+        let x = true;
+        const userId = req.body.PKUserId;
+        const user = await Admin.findOne({ where: { PKUserId: userId, IsDeleted: false } })
+        const oldPassword = req.body.oldPassword;
+        const newPassword = req.body.newPassword;
+        const retypeNewPassword = req.body.retypeNewPassword;
 
-    if (!oldPassword) { res.status(400).send("Please enter your old password") }
-    if (!newPassword) { res.status(400).send("Please enter your new password") }
-    if (!retypeNewPassword) { res.status(400).send("Please retype your new password") }
+        if (!oldPassword) { res.status(400).send("Please enter your old password") }
+        if (!newPassword) { res.status(400).send("Please enter your new password") }
+        if (!retypeNewPassword) { res.status(400).send("Please retype your new password") }
 
-    if (newPassword.length <= 8) {
-        x = false;
-        res.status(400).send("Password must be greater than 8 characters")
+        if (newPassword.length <= 8) {
+            x = false;
+            res.status(400).send("Password must be greater than 8 characters")
 
+        }
+
+        if (newPassword !== retypeNewPassword) {
+            x = false;
+            res.status(400).send("Passwords donot match!!")
+        }
+
+        const passwordMatches = await bcrypt.compare(oldPassword, user.Password);
+        if (!passwordMatches) {
+            x = false;
+            res.status(400).send("Old password is incorrect")
+        }
+
+        const samePassword = await bcrypt.compare(newPassword, user.Password);
+        if (samePassword) {
+            x = false;
+            res.status(400).send("Old password cannot be same as new password")
+        }
+
+        if (x) {
+            user.Password = await bcrypt.hash(newPassword, 8);
+            await user.save();
+            res.status(200).send("Password is changed successfully")
+        }
+    } catch (e) {
+        res.status(400).send(e.message);
     }
-
-    if (newPassword !== retypeNewPassword) {
-        x = false;
-        res.status(400).send("Passwords donot match!!")
-    }
-
-    const passwordMatches = await bcrypt.compare(oldPassword, user.Password);
-    if (!passwordMatches) {
-        x = false;
-        res.status(400).send("Old password is incorrect")
-    }
-
-    const samePassword = await bcrypt.compare(newPassword, user.Password);
-    if (samePassword) {
-        x = false;
-        res.status(400).send("Old password cannot be same as new password")
-    }
-
-    if (x) {
-        user.Password = await bcrypt.hash(newPassword, 8);
-        await user.save();
-        res.status(200).send("Password is changed successfully")
-    }
-
 }
 
 //Logout
-const logout = async(req,res)=>{
+const logout = async (req, res) => {
     try {
         const refreshToken = await req.body.refreshToken;
-        const decodedToken = jwt.verify(refreshToken,process.env.REFRESH_TOKEN);
+        const decodedToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN);
         const session = await Session.findOne({
             where: {
                 RefreshToken: refreshToken,
@@ -266,12 +289,12 @@ const logout = async(req,res)=>{
             }
         });
         if (!session) {
-            res.status(403).send("Invalid Refresh Token");
+            res.status(400).send("Invalid Refresh Token");
         }
         await session.destroy();
         res.status(200).send("Successfully logged out ");
     } catch (e) {
-        res.status(500).send(e.message);
+        res.status(400).send(e.message);
     }
 }
 

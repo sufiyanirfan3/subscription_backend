@@ -83,140 +83,172 @@ const renewAccessToken = async (req, res) => {
 
 // Admin SignIn
 const adminSignIn = async (req, res) => {
-    let username = req.body.Username
+    try {
+        let username = req.body.Username
 
-    const admin = await Admin.findOne({ where: { Username: username } })
+        const admin = await Admin.findOne({ where: { Username: username } })
 
-    if (admin) {
+        if (admin) {
 
-        let checkPass = await bcrypt.compare(req.body.Password, admin.Password)
+            let checkPass = await bcrypt.compare(req.body.Password, admin.Password)
 
-        if (checkPass) {
-            const tokens = await generateAuthToken(admin.PKAdminId);
-            const refreshToken = tokens.refreshToken;
-            const session = await Session.build({
-                FKUserId: admin.PKAdminId,
-                RefreshToken: refreshToken
-            });
-            await session.save();
-            res.status(200).json({ message: "Login Succesful", tokens: tokens });
+            if (checkPass) {
+                const tokens = await generateAuthToken(admin.PKAdminId);
+                const refreshToken = tokens.refreshToken;
+                const session = await Session.build({
+                    FKUserId: admin.PKAdminId,
+                    RefreshToken: refreshToken
+                });
+                await session.save();
+                res.status(200).json({ message: "Login Succesful", tokens: tokens });
+            }
+            else {
+                res.send({ message: "Your password is incorrect", value: checkPass, user: checkUser }).status(403)
+            }
+
+
         }
         else {
-            res.send({ message: "Your password is incorrect", value: checkPass, user: checkUser }).status(403)
+            res.send({ message: "No admin is registered with this username" }).status(403)
         }
-
-
+    } catch (e) {
+        res.status(400).send(e.message);
     }
-    else {
-        res.send({ message: "No admin is registered with this username" }).status(403)
-    }
+
 }
 
 // add admin
 const addAdmin = async (req, res) => {
-    if (req.body.Password.length <= 8) {
-        res.status(400).send("Password must be greater than 8 characters")
-    }
-    else {
-        let info = {
-            FirstName: req.body.FirstName,
-            LastName: req.body.LastName,
-            Username: req.body.Username,
-            Email: req.body.Email,
-            Password: req.body.Password,
-            PhoneNumber: req.body.PhoneNumber,
-
+    try {
+        if (req.body.Password.length <= 8) {
+            res.status(400).send("Password must be greater than 8 characters")
         }
-        const hashPass = await bcrypt.hash(info.Password, 8)
-        info.Password = hashPass
-        const admin = await Admin.create(info)
-        res.status(200).send(admin)
+        else {
+            let info = {
+                FirstName: req.body.FirstName,
+                LastName: req.body.LastName,
+                Username: req.body.Username,
+                Email: req.body.Email,
+                Password: req.body.Password,
+                PhoneNumber: req.body.PhoneNumber,
+
+            }
+            const hashPass = await bcrypt.hash(info.Password, 8)
+            info.Password = hashPass
+            const admin = await Admin.create(info)
+            res.status(200).send(admin)
+        }
+    } catch (e) {
+        res.status(400).send(e.message);
     }
 }
 
 // get all admins
 const getAdmins = async (req, res) => {
-    let admins = await Admin.findAll({})
-    res.status(200).send(admins)
+    try {
+        let admins = await Admin.findAll({ IsDeleted: false })
+        res.status(200).send(admins)
+    } catch (e) {
+        res.status(400).send(e.message);
+    }
 }
 
 // get admin by id
 const getAdminById = async (req, res) => {
-    let id = req.params.id
-    let admin = await Admin.findOne({ where: { PKAdminId: id } })
-    res.status(200).send(admin)
+    try {
+        let id = req.params.id
+        let admin = await Admin.findOne({ where: { PKAdminId: id, IsDeleted: false } })
+        res.status(200).send(admin)
+    } catch (e) {
+        res.status(400).send(e.message);
+    }
 
 }
 
 // update admin
 const updateProfile = async (req, res) => {
-    let id = req.params.id
-    if (req.body.Username || req.body.Email || req.body.Password) {
-        delete (req.body.Username)
-        delete (req.body.Email)
-        delete (req.body.Password)
+    try {
+        let id = req.params.id
+        if (req.body.Username || req.body.Email || req.body.Password) {
+            delete (req.body.Username)
+            delete (req.body.Email)
+            delete (req.body.Password)
+        }
+        const admin = await Admin.update(req.body, { where: { PKAdminId: id, IsDeleted: false } })
+        res.status(200).send("Profile updated successfully")
+    } catch (e) {
+        res.status(400).send(e.message);
     }
-    const admin = await Admin.update(req.body, { where: { PKAdminId: id } })
-    res.status(200).send("Profile updated successfully")
 }
 
 // delete admin
 const deleteAdmin = async (req, res) => {
-    let id = req.params.id
-    await Admin.destroy({ where: { PKAdminId: id } })
-    res.status(200).send("Admin is deleted")
+    try {
+        let id = req.params.id
 
+        const deleteAdmin = await User.update(
+            { IsDeleted: true, DeletedDate: Date.now() },
+            { where: { PKAdminId: id, IsDeleted: false } }
+        );
+        res.status(200).json("Admin deleted successfully")
+    } catch (e) {
+        res.status(400).send(e.message)
+    }
 }
 
 // change password
 const changePassword = async (req, res) => {
-    let x = true;
-    const adminId = req.body.PKAdminId;
-    const admin = await Admin.findOne({ where: { PKAdminId: adminId } })
-    const oldPassword = req.body.oldPassword;
-    const newPassword = req.body.newPassword;
-    const retypeNewPassword = req.body.retypeNewPassword;
+    try {
+        let x = true;
+        const adminId = req.body.PKAdminId;
+        const admin = await Admin.findOne({ where: { PKAdminId: adminId , IsDeleted: false } })
+        const oldPassword = req.body.oldPassword;
+        const newPassword = req.body.newPassword;
+        const retypeNewPassword = req.body.retypeNewPassword;
 
-    if (!oldPassword) { res.status(400).send("Please enter your old password") }
-    if (!newPassword) { res.status(400).send("Please enter your new password") }
-    if (!retypeNewPassword) { res.status(400).send("Please retype your new password") }
+        if (!oldPassword) { res.status(400).send("Please enter your old password") }
+        if (!newPassword) { res.status(400).send("Please enter your new password") }
+        if (!retypeNewPassword) { res.status(400).send("Please retype your new password") }
 
-    if (newPassword.length <= 8) {
-        x = false;
-        res.status(400).send("Password must be greater than 8 characters")
+        if (newPassword.length <= 8) {
+            x = false;
+            res.status(400).send("Password must be greater than 8 characters")
 
-    }
+        }
 
-    if (newPassword !== retypeNewPassword) {
-        x = false;
-        res.status(400).send("Passwords donot match!!")
-    }
+        if (newPassword !== retypeNewPassword) {
+            x = false;
+            res.status(400).send("Passwords donot match!!")
+        }
 
-    const passwordMatches = await bcrypt.compare(oldPassword, admin.Password);
-    if (!passwordMatches) {
-        x = false;
-        res.status(400).send("Old password is incorrect")
-    }
+        const passwordMatches = await bcrypt.compare(oldPassword, admin.Password);
+        if (!passwordMatches) {
+            x = false;
+            res.status(400).send("Old password is incorrect")
+        }
 
-    const samePassword = await bcrypt.compare(newPassword, admin.Password);
-    if (samePassword) {
-        x = false;
-        res.status(400).send("Old password cannot be same as new password")
-    }
+        const samePassword = await bcrypt.compare(newPassword, admin.Password);
+        if (samePassword) {
+            x = false;
+            res.status(400).send("Old password cannot be same as new password")
+        }
 
-    if (x) {
-        admin.Password = await bcrypt.hash(newPassword, 8);
-        await admin.save();
-        res.status(200).send("Password is changed successfully")
+        if (x) {
+            admin.Password = await bcrypt.hash(newPassword, 8);
+            await admin.save();
+            res.status(200).send("Password is changed successfully")
+        }
+    } catch (e) {
+        res.status(400).send(e.message)
     }
 
 }
 
 //Logout
-const logout = async(req,res)=>{
+const logout = async (req, res) => {
     try {
         const refreshToken = await req.body.refreshToken;
-        const decodedToken = jwt.verify(refreshToken,process.env.REFRESH_TOKEN);
+        const decodedToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN);
         const session = await Session.findOne({
             where: {
                 RefreshToken: refreshToken,
@@ -224,12 +256,12 @@ const logout = async(req,res)=>{
             }
         });
         if (!session) {
-            res.status(403).send("Invalid Refresh Token");
+            res.status(400).send("Invalid Refresh Token");
         }
         await session.destroy();
         res.status(200).send("Successfully logged out ");
     } catch (e) {
-        res.status(500).send(e.message);
+        res.status(400).send(e.message);
     }
 }
 

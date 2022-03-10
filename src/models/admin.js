@@ -93,6 +93,14 @@ module.exports = (sequelize, DataTypes) => {
             }
          },
 
+         IsDeleted: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+         },
+   
+         DeletedDate: {
+            type: DataTypes.DATE
+         }
       }
    );
    return Admin

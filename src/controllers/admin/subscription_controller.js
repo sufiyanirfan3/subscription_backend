@@ -3,44 +3,67 @@ const Subscription = require('../../models').subscription
 
 // add subscription
 const addSubscription = async (req, res) => {
-
-        let info = {
-                FKCustomerID: req.body.FKCustomerID,
-                FKPackageID: req.body.FKPackageID,
-                PKSubscriptionId: this.FKCustomerID + this.FKPackageID
+        try {
+                let info = {
+                        FKCustomerID: req.body.FKCustomerID,
+                        FKPackageID: req.body.FKPackageID,
+                        PKSubscriptionId: this.FKCustomerID + this.FKPackageID
+                }
+                const subscription = await Subscription.create(info)
+                res.status(200).send(subscription)
+        } catch (e) {
+                res.status(400).send(e.message)
         }
-        const subscription = await Subscription.create(info)
-        res.status(200).send(subscription)
 }
 
 
 // get all subscriptions
 const getSubscriptions = async (req, res) => {
-        let subscriptions = await Subscription.findAll({})
-        res.status(200).send(subscriptions)
+        try {
+                let subscriptions = await Subscription.findAll({ IsDeleted: false })
+                res.status(200).send(subscriptions)
+        } catch (e) {
+                res.status(400).send(e.message)
+        }
 }
 
 // get subscription by id
 const getSubscriptionById = async (req, res) => {
-        let id = req.params.id
-        let subscription = await Subscription.findOne({ where: { CompoundPK: id } })
-        res.status(200).send(subscription)
+        try {
+                let id = req.params.id
+                let subscription = await Subscription.findOne({ where: { PKSubscriptionId: id, IsDeleted: false } })
+                res.status(200).send(subscription)
+        } catch (e) {
+                res.status(400).send(e.message)
+        }
 
 }
 
 // update subscription
 const updateSubscription = async (req, res) => {
-        let id = req.params.id
-        const subscription = await Subscription.update(req.body, { where: { CompoundPK: id } })
-        res.status(200).send(subscription)
+        try {
+                let id = req.params.id
+                const subscription = await Subscription.update(req.body, { where: { PKSubscriptionId: id, IsDeleted: false } })
+                res.status(200).send(subscription)
+        } catch (e) {
+                res.status(400).send(e.message)
+        }
 }
 
 // delete subscription
 const deleteSubscription = async (req, res) => {
-        let id = req.params.id
-        await Subscription.destroy({ where: { CompoundPK: id } })
-        res.status(200).send("subscription is deleted")
-
+        try {
+                let id = req.params.id
+        
+                const deleteSubscription = await User.update(
+                    { IsDeleted: true, DeletedDate: Date.now() },
+                    { where: { PKSubscriptionId: id, IsDeleted: false } }
+                );
+                res.status(200).json("Subscription deleted successfully deleted successfully")
+            } catch (e) {
+                res.status(400).send(e.message)
+            }
+        
 }
 
 
