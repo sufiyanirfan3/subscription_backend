@@ -18,14 +18,15 @@ module.exports = (sequelize, DataTypes) => {
                 //  autoIncrement: true
             },
             
-            FKPackageID: {
-                type: DataTypes.STRING(20),
-                unique: 'compositeIndex'
-                //  allowNull: false,
-                //  unique: true,
+            // FKPackageID: {
+            //     type: DataTypes.STRING(20),
+            //     unique: 'compositeIndex'
+            //     //  allowNull: false,
+            //     //  unique: true,
 
 
-            },
+            // },
+
             PKSubscriptionId: {
                 type: DataTypes.STRING(50),
                 allowNull: false,

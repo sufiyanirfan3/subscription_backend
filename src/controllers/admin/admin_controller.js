@@ -85,9 +85,7 @@ const renewAccessToken = async (req, res) => {
 const adminSignIn = async (req, res) => {
     try {
         let username = req.body.Username
-
         const admin = await Admin.findOne({ where: { Username: username } })
-
         if (admin) {
 
             let checkPass = await bcrypt.compare(req.body.Password, admin.Password)
@@ -100,7 +98,7 @@ const adminSignIn = async (req, res) => {
                     RefreshToken: refreshToken
                 });
                 await session.save();
-                res.status(200).json({ message: "Login Succesful", tokens: tokens });
+                res.status(200).json({ message: "Login Successful", tokens: tokens });
             }
             else {
                 res.send({ message: "Your password is incorrect", value: checkPass, user: checkUser }).status(403)
