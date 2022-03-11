@@ -18,7 +18,7 @@ router.post('/addCustomer',userController.authenticateUser,customerController.ad
 
 router.put('/updateCustomer/:id',userController.authenticateUser,customerController.updateCustomer)
 
-router.delete('/deleteCustomer/:id',userController.authenticateUser,customerController.deleteCustomer)
+router.put('/deleteCustomer/:id',userController.authenticateUser,customerController.deleteCustomer)
 
 //package
 
@@ -26,7 +26,7 @@ router.post('/addPackage',userController.authenticateUser,packageController.addP
 
 router.put('/updatePackage/:id',userController.authenticateUser,packageController.updatePackage)
 
-router.delete('/deletePackage/:id',userController.authenticateUser,packageController.deletePackage)
+router.put('/deletePackage/:id',userController.authenticateUser,packageController.deletePackage)
 
 
 

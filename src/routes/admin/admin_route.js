@@ -19,14 +19,11 @@ router.get('/getAdminById/:id',adminController.getAdminById)
 
 router.put('/updateProfile/:id',adminController.authenticateAdmin,adminController.updateProfile)
 
-router.delete('/deleteAdmin/:id',adminController.authenticateAdmin,adminController.deleteAdmin)
+router.put('/deleteAdmin/:id',adminController.authenticateAdmin,adminController.deleteAdmin)
 
 router.post('/changePassword',adminController.authenticateAdmin,adminController.changePassword)
 
 router.post('/logout',adminController.authenticateAdmin,adminController.logout)
-
-
-
 
 //user
 router.post('/addUser',adminController.authenticateAdmin,userController.addUser)

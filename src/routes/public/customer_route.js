@@ -11,7 +11,7 @@ router.get('/getCustomerById/:id',customerController.getCustomerById)
 
 router.put('/updateCustomer/:id',customerController.updateCustomer)
 
-router.delete('/deleteCustomer/:id',customerController.deleteCustomer)
+router.put('/deleteCustomer/:id',customerController.deleteCustomer)
 
 
 

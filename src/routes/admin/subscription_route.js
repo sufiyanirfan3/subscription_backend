@@ -11,6 +11,6 @@ router.get('/getSubscriptionById/:id',subscriptionController.getSubscriptionById
 
 router.put('/updateSubscription/:id',subscriptionController.updateSubscription)
 
-router.delete('/deleteSubscription/:id',subscriptionController.deleteSubscription)
+router.put('/deleteSubscription/:id',subscriptionController.deleteSubscription)
 
 module.exports=router
