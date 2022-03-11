@@ -10,40 +10,55 @@ module.exports = (sequelize, DataTypes) => {
     const Subscription = sequelize.define(
         "subscription",
         {
-            FKCustomerID: {
-                type: DataTypes.INTEGER,
-                unique: 'compositeIndex'
-                //  primaryKey: true,
-                //  unique: true,
-                //  autoIncrement: true
-            },
-            
-            // FKPackageID: {
-            //     type: DataTypes.STRING(20),
-            //     unique: 'compositeIndex'
-            //     //  allowNull: false,
-            //     //  unique: true,
-
-
-            // },
-
             PKSubscriptionId: {
-                type: DataTypes.STRING(50),
+                type: DataTypes.INTEGER,
                 allowNull: false,
                 unique: true,
-                primaryKey: true,
-                // value: this.FKCustomerID.value + this.FKPackageID.value
+                primaryKey: true
+            },
 
+            FKCustomerId: {
+                type: DataTypes.INTEGER
+            },
+
+            FKPackageId: {
+                type: DataTypes.INTEGER
             },
 
             IsDeleted: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false
-             },
-       
-             DeletedDate: {
+            },
+
+            DeletedDate: {
                 type: DataTypes.DATE
-             }
-        });
+            }
+        },
+        {
+            indexes: [
+                {
+                    name: "FK_Customer_Package_Composite_Unique_Key",
+                    unique: true,
+                    fields: ["FKCustomerId", "FKPackageId"]
+                },
+                {
+                    name: "PRIMARY",
+                    unique: true,
+                    using: "BTREE",
+                    fields: [{ name: "PKSubscriptionId" }]
+                },
+                {
+                    name: "FKCustomerId",
+                    using: "BTREE",
+                    fields: [{ name: "FKCustomerId" }]
+                },
+                {
+                    name: "FKPackageId",
+                    using: "BTREE",
+                    fields: [{ name: "FKPackageId" }]
+                }
+            ]
+        },
+    );
     return Subscription
 }
