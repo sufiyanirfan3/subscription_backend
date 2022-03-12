@@ -144,7 +144,7 @@ const addAdmin = async (req, res) => {
 // get all admins
 const getAdmins = async (req, res) => {
     try {
-        let admins = await Admin.findAll({ IsDeleted: false })
+        let admins = await Admin.findAll({ where: { IsDeleted: false } })
         res.status(200).send(admins)
     } catch (e) {
         res.status(400).send(e.message);
@@ -184,7 +184,7 @@ const deleteAdmin = async (req, res) => {
     try {
         let id = req.params.id
 
-        const deleteAdmin = await User.update(
+        const deleteAdmin = await Admin.update(
             { IsDeleted: true, DeletedDate: Date.now() },
             { where: { PKAdminId: id, IsDeleted: false } }
         );
@@ -199,7 +199,7 @@ const changePassword = async (req, res) => {
     try {
         let x = true;
         const adminId = req.body.PKAdminId;
-        const admin = await Admin.findOne({ where: { PKAdminId: adminId , IsDeleted: false } })
+        const admin = await Admin.findOne({ where: { PKAdminId: adminId, IsDeleted: false } })
         const oldPassword = req.body.oldPassword;
         const newPassword = req.body.newPassword;
         const retypeNewPassword = req.body.retypeNewPassword;

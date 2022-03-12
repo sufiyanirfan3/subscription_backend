@@ -50,13 +50,13 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
 
-        FKUserId: {
-            type: DataTypes.INTEGER
-        },
+        // FKUserId: {
+        //     type: DataTypes.INTEGER
+        // },
 
-        FKSubscriptionId: {
-            type: DataTypes.INTEGER,
-        },
+        // FKSubscriptionId: {
+        //     type: DataTypes.INTEGER,
+        // },
 
         IsDeleted: {
             type: DataTypes.BOOLEAN,

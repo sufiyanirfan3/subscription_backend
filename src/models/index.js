@@ -22,15 +22,17 @@ db.user.hasMany(db.package, {
    foreignKey: "FKUserId"
 });
 db.package.belongsTo(db.user,{
-   onDelete: "cascade"
+   onDelete: "cascade",
+   foreignKey: "FKUserId"
 })
 
 db.package.hasMany(db.subscription, {
    onDelete: "cascade",
-   foreignKey: "FKPackageId",
+   foreignKey: "FKPackageId"
 });
 db.subscription.belongsTo(db.package,{
-   onDelete:"cascade"
+   onDelete:"cascade",
+   foreignKey: "FKPackageId"
 })
 
 

@@ -143,7 +143,7 @@ const addUser = async (req, res) => {
 // get all users
 const getUsers = async (req, res) => {
     try {
-        let users = await User.findAll({ IsDeleted: false })
+        let users = await User.findAll({ where: { IsDeleted: false } })
         res.status(200).send(users)
     } catch (e) {
         res.status(400).send(e.message);

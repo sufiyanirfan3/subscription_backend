@@ -101,8 +101,8 @@ module.exports = (sequelize, DataTypes) => {
                msg: "CNIC no can only contain numbers"
             },
             len: {
-               args: [11, 11],
-               msg: "CNIC no must be 11 characters long"
+               args: [13, 13],
+               msg: "CNIC no must be 13 characters long"
             },
          }
       },
