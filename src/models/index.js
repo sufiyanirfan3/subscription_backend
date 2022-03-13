@@ -35,6 +35,15 @@ db.subscription.belongsTo(db.package,{
    foreignKey: "FKPackageId"
 })
 
+db.customer.hasMany(db.subscription, {
+   onDelete: "cascade",
+   foreignKey: "FKCustomerId"
+});
+db.subscription.belongsTo(db.customer,{
+   onDelete:"cascade",
+   foreignKey: "FKCustomerId"
+})
+
 
 
 

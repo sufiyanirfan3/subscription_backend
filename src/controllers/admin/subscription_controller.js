@@ -16,11 +16,10 @@ const addSubscription = async (req, res) => {
         }
 }
 
-
 // get all subscriptions
 const getSubscriptions = async (req, res) => {
         try {
-                let subscriptions = await Subscription.findAll({ IsDeleted: false })
+                let subscriptions = await Subscription.findAll({where:{ IsDeleted: false }})
                 res.status(200).send(subscriptions)
         } catch (e) {
                 res.status(400).send(e.message)
@@ -65,8 +64,6 @@ const deleteSubscription = async (req, res) => {
             }
         
 }
-
-
 
 module.exports = {
         addSubscription,

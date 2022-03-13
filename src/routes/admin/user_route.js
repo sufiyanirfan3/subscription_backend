@@ -7,11 +7,22 @@ const packageController=require("../../controllers/admin/package_controller")
 
 router.post("/renewAccessToken", userController.renewAccessToken);
 
+router.post('/userSignIn',userController.userSignIn)
+
 router.put('/updateProfile/:id',userController.authenticateUser,userController.updateProfile)
 
 router.post('/changePassword',userController.authenticateUser,userController.changePassword)
 
 router.post('/logout',userController.authenticateUser,userController.logout)
+
+
+router.get('/userPackages',userController.authenticateUser,userController.userPackages)
+router.get('/userPackageById/:id',userController.authenticateUser,userController.userPackageById)
+
+router.get('/subscriptionsOfPackages',userController.authenticateUser,userController.subscriptionsOfPackages)
+router.get('/subscriptionByPackageId/:id',userController.authenticateUser,userController.subscriptionByPackageId)
+
+router.get('/getCustomerBySubscriptionId/:id',userController.authenticateUser,userController.customerBySubscriptionId)
 
 //customer
 router.post('/addCustomer',userController.authenticateUser,customerController.addCustomer)
@@ -19,6 +30,8 @@ router.post('/addCustomer',userController.authenticateUser,customerController.ad
 router.put('/updateCustomer/:id',userController.authenticateUser,customerController.updateCustomer)
 
 router.put('/deleteCustomer/:id',userController.authenticateUser,customerController.deleteCustomer)
+
+router.get('/getSubscribedCustomer/:id',userController.authenticateUser,customerController.getSubscribedCustomers)
 
 //package
 

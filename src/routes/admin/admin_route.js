@@ -25,6 +25,8 @@ router.post('/changePassword',adminController.authenticateAdmin,adminController.
 
 router.post('/logout',adminController.authenticateAdmin,adminController.logout)
 
+router.get('/getCustomerBySubscriptionId/:id',adminController.authenticateAdmin,adminController.getCustomerBySubscriptionId)
+
 //user
 router.post('/addUser',adminController.authenticateAdmin,userController.addUser)
 
@@ -54,6 +56,8 @@ router.get('/getSubscriptionById/:id',adminController.authenticateAdmin,subscrip
 router.get('/getCustomers',adminController.authenticateAdmin,customerController.getCustomers)
 
 router.get('/getCustomerById/:id',adminController.authenticateAdmin,customerController.getCustomerById)
+
+
 
 
 

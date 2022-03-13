@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
          },
 
          FirstName: {
-            type: DataTypes.STRING(20),
+            type: DataTypes.STRING(50),
             allowNull: false,
             unique: false,
             validate: {
@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
          },
 
          LastName: {
-            type: DataTypes.STRING(20),
+            type: DataTypes.STRING(50),
             allowNull: false,
             unique: false,
             validate: {
@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
          },
 
          Username: {
-            type: DataTypes.STRING(20),
+            type: DataTypes.STRING(50),
             allowNull: false,
             unique: true,
             validate: {
@@ -97,11 +97,61 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             defaultValue: false
          },
-   
+
          DeletedDate: {
             type: DataTypes.DATE
          }
-      }
+      },
+      {
+         indexes: [
+            {
+               name: "PRIMARY",
+               unique: true,
+               using: "BTREE",
+               fields: [{ name: "PKAdminId" }]
+            },
+            {
+               name: "FirstName",
+               using: "BTREE",
+               fields: [{ name: "FirstName" }]
+            },
+            {
+               name: "LastName",
+               using: "BTREE",
+               fields: [{ name: "LastName" }]
+            },
+            {
+               name: "Username",
+               using: "BTREE",
+               fields: [{ name: "Username" }]
+            },
+            {
+               name: "Email",
+               using: "BTREE",
+               fields: [{ name: "Email" }]
+            },
+            {
+               name: "Password",
+               using: "BTREE",
+               fields: [{ name: "Password" }]
+            },
+            {
+               name: "PhoneNumber",
+               using: "BTREE",
+               fields: [{ name: "PhoneNumber" }]
+            },
+            {
+               name: "IsDeleted",
+               using: "BTREE",
+               fields: [{ name: "IsDeleted" }]
+            },
+            {
+               name: "DeletedDate",
+               using: "BTREE",
+               fields: [{ name: "DeletedDate" }]
+            }
+         ]
+      },
    );
    return Admin
 };

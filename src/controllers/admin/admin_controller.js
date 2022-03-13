@@ -2,7 +2,9 @@ const bcrypt = require('bcryptjs')
 const jwt = require("jsonwebtoken");
 const Admin = require('../../models').admin
 const Session = require('../../models').session
-
+const Customer = require('../../models').customer
+const Subscription = require('../../models').subscription
+const Package = require('../../models').package
 // Authenticate Admin
 const authenticateAdmin = async (req, res, next) => {
     try {
@@ -101,7 +103,7 @@ const adminSignIn = async (req, res) => {
                 res.status(200).json({ message: "Login Successful", tokens: tokens });
             }
             else {
-                res.send({ message: "Your password is incorrect", value: checkPass, user: checkUser }).status(403)
+                res.send({ message: "Your password is incorrect"}).status(403)
             }
 
 
@@ -263,6 +265,27 @@ const logout = async (req, res) => {
     }
 }
 
+//admin will do it 
+const getCustomerBySubscriptionId = async (req, res) => {
+    try {
+        let id = req.params.id
+
+        let subscribedCustomers = await Subscription.findAll({
+            where: { PKSubscriptionId:id,IsDeleted: false },
+            attributes:[],
+            include: [{
+                model: Customer,
+                where: { IsDeleted: false },
+            }]
+
+        })
+
+        res.status(200).send(subscribedCustomers)
+    } catch (e) {
+        res.status(400).send(e.message);
+    }
+}
+
 module.exports = {
     authenticateAdmin,
     generateAuthToken,
@@ -274,5 +297,6 @@ module.exports = {
     updateProfile,
     deleteAdmin,
     changePassword,
-    logout
+    logout,
+    getCustomerBySubscriptionId
 }

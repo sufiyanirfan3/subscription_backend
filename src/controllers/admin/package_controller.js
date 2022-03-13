@@ -18,7 +18,7 @@ const addPackage = async (req, res) => {
 // get all packages
 const getPackages = async (req, res) => {
     try {
-        let packages = await Package.findAll({ IsDeleted: false })
+        let packages = await Package.findAll({where:{ IsDeleted: false }})
         res.status(200).send(packages)
     } catch (e) {
         res.status(400).send(e.message);
@@ -64,10 +64,10 @@ const deletePackage = async (req, res) => {
 
 }
 
-//get packages by user id
+//get packages by user id(admin can see it here id through params)
 const getPackagesByUserId = async (req, res) => {
     try {
-        let id = req.params.PKUserId
+        let id = req.params.id
         let package = await Package.findAll({ where: { FKUserId: id, IsDeleted: false } })
         res.status(200).send(package)
 

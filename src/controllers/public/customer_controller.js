@@ -1,43 +1,31 @@
-const Customer = require('../../models/customer')
-
+const Customer = require('../../models').customer
+const Subscription = require('../../models').subscription
+const Package = require('../../models').package
 // add customer
 const addCustomer = async (req, res) => {
     try {
-        if (req.body.Password.length <= 8) {
-            res.status(400).send("Password must be greater than 8 characters")
+        let info = {
+            FirstName: req.body.FirstName,
+            LastName: req.body.LastName,
+            Email: req.body.Email,
+            PhoneNumber: req.body.PhoneNumber,
+            CNIC: req.body.CNIC,
+            Address: req.body.Address,
+            Country: req.body.Country,
+            City: req.body.City,
+            Area: req.body.Area
         }
-        else {
-            let info = {
-                FirstName: req.body.FirstName,
-                LastName: req.body.LastName,
-                Username: req.body.Username,
-                Email: req.body.Email,
-                Password: req.body.Password,
-                PhoneNumber: req.body.PhoneNumber,
-                CNIC: req.body.CNIC,
-                Address: req.body.Address,
-                Country: req.body.Country,
-                City: req.body.City,
-                Area: req.body.Area
-            }
-
-            const hashPass = await bcrypt.hash(info.Password, 8)
-            info.Password = hashPass
-            const customer = await Customer.create(info)
-            res.status(200).send(customer)
-        }
+        const customer = await Customer.create(info)
+        res.status(200).send(customer)
     } catch (e) {
         res.status(400).send(e.message);
     }
-
-
-
 }
 
 // get all customers
 const getCustomers = async (req, res) => {
     try {
-        let customers = await Customer.findAll({ IsDeleted: false })
+        let customers = await Customer.findAll({ where: { IsDeleted: false } })
         res.status(200).send(customers)
     } catch (e) {
         res.status(400).send(e.message);
@@ -81,12 +69,39 @@ const deleteCustomer = async (req, res) => {
     }
 }
 
+// get subscribed customers which that user has created(myCustomers)
+const getSubscribedCustomers = async (req, res) => {
+    try {
+        let id = req.params.id
+        let subscribedCustomers = await Package.findAll({
+            where: { FKUserId:id,IsDeleted: false },
+            attributes:[],
+            include: [{
+                model: Subscription,
+                where: { IsDeleted: false },
+                attributes:[],
+                
+                include: [{
+                 
+                    model: Customer,
+                    where: { IsDeleted: false },
+                    
+                }]
+            }]
 
+        })
+
+        res.status(200).send(subscribedCustomers)
+    } catch (e) {
+        res.status(400).send(e.message);
+    }
+}
 
 module.exports = {
     addCustomer,
     getCustomers,
     getCustomerById,
     updateCustomer,
-    deleteCustomer
+    deleteCustomer,
+    getSubscribedCustomers
 }

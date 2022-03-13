@@ -1,75 +1,110 @@
 module.exports = (sequelize, DataTypes) => {
-    const Package = sequelize.define('package', {
+    const Package = sequelize.define('package',
+        {
 
-        PKPackageId: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            unique: true,
-            autoIncrement: true
-        },
+            PKPackageId: {
+                type: DataTypes.INTEGER,
+                primaryKey: true,
+                unique: true,
+                autoIncrement: true
+            },
 
-        PackageName: {
-            type: DataTypes.STRING(50),
-            allowNull: false,
-            unique: true,
-            validate: {
-                notNull: {
-                    msg: "Please enter your package name"
-                },
-                isAlpha: {
-                    msg: "Package name can only contain letters"
+            PackageName: {
+                type: DataTypes.STRING(50),
+                allowNull: false,
+                unique: true,
+                validate: {
+                    notNull: {
+                        msg: "Please enter your package name"
+                    },
+                    isAlpha: {
+                        msg: "Package name can only contain letters"
+                    }
                 }
+            },
+
+            PackageCost: {
+                type: DataTypes.INTEGER(20),
+                allowNull: false,
+                unique: true,
+                validate: {
+                    notNull: {
+                        msg: "Please enter your package cost"
+                    },
+                    isNumeric: {
+                        msg: "Package cost can only contain numbers"
+                    }
+                }
+            },
+
+            SubscriptionPeriod: {
+                type: DataTypes.STRING(50),
+                allowNull: false,
+                unique: true,
+                validate: {
+                    notNull: {
+                        msg: "Please enter your subscription period"
+                    },
+                    isAlpha: {
+                        msg: "Subscripton period can only contain letters"
+                    }
+                }
+            },
+
+            FKUserId: {
+                type: DataTypes.INTEGER
+            },
+
+            IsDeleted: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false
+            },
+
+            DeletedDate: {
+                type: DataTypes.DATE
             }
         },
-
-        PackageCost: {
-            type: DataTypes.INTEGER(20),
-            allowNull: false,
-            unique: true,
-            validate: {
-                notNull: {
-                    msg: "Please enter your package cost"
+        {
+            indexes: [
+                {
+                    name: "PRIMARY",
+                    unique: true,
+                    using: "BTREE",
+                    fields: [{ name: "PKPackageId" }]
                 },
-                isNumeric: {
-                    msg: "Package cost can only contain numbers"
-                }
-            }
-        },
-
-        SubscriptionPeriod: {
-            type: DataTypes.STRING(50),
-            allowNull: false,
-            unique: true,
-            validate: {
-                notNull: {
-                    msg: "Please enter your subscription period"
+                {
+                    name: "PackageName",
+                    using: "BTREE",
+                    fields: [{ name: "PackageName" }]
                 },
-                isAlpha: {
-                    msg: "Subscripton period can only contain letters"
+                {
+                    name: "PackageCost",
+                    using: "BTREE",
+                    fields: [{ name: "PackageCost" }]
+                },
+                {
+                    name: "SubscriptionPeriod",
+                    using: "BTREE",
+                    fields: [{ name: "SubscriptionPeriod" }]
+                },
+                {
+                    name: "FKUserId",
+                    using: "BTREE",
+                    fields: [{ name: "FKUserId" }]
+                },
+                {
+                    name: "IsDeleted",
+                    using: "BTREE",
+                    fields: [{ name: "IsDeleted" }]
+                },
+                {
+                    name: "DeletedDate",
+                    using: "BTREE",
+                    fields: [{ name: "DeletedDate" }]
                 }
-            }
+            ]
         },
-
-        // FKUserId: {
-        //     type: DataTypes.INTEGER
-        // },
-
-        // FKSubscriptionId: {
-        //     type: DataTypes.INTEGER,
-        // },
-
-        IsDeleted: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false
-        },
-
-        DeletedDate: {
-            type: DataTypes.DATE
-        }
-
-
-
-    });
+    );
     return Package
 
 }

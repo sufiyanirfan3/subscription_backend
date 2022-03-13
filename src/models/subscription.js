@@ -12,9 +12,9 @@ module.exports = (sequelize, DataTypes) => {
         {
             PKSubscriptionId: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
                 unique: true,
-                primaryKey: true
+                primaryKey: true,
+                autoIncrement: true
             },
 
             FKCustomerId: {
@@ -56,6 +56,16 @@ module.exports = (sequelize, DataTypes) => {
                     name: "FKPackageId",
                     using: "BTREE",
                     fields: [{ name: "FKPackageId" }]
+                },
+                {
+                    name: "IsDeleted",
+                    using: "BTREE",
+                    fields: [{ name: "IsDeleted" }]
+                },
+                {
+                    name: "DeletedDate",
+                    using: "BTREE",
+                    fields: [{ name: "DeletedDate" }]
                 }
             ]
         },

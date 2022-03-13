@@ -30,7 +30,7 @@ app.listen(process.env.PORT, () => {
 });
 
 
-
+//{alter:true}
 sequelize.sync().then(() => {
     console.log("Tables created successfully")
  })

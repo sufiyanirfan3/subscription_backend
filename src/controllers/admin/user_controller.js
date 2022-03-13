@@ -2,6 +2,9 @@ const bcrypt = require('bcryptjs')
 const User = require('../../models').user
 const jwt = require("jsonwebtoken");
 const Session = require('../../models').session
+const Customer = require('../../models').customer
+const Subscription = require('../../models').subscription
+const Package = require('../../models').package
 
 // Authenticate user
 const authenticateUser = async (req, res, next) => {
@@ -84,13 +87,13 @@ const userSignIn = async (req, res) => {
         let username = req.body.Username
 
         const user = await User.findOne({ where: { Username: username } })
-
+        console.log(username)
         if (user) {
 
             let checkPass = await bcrypt.compare(req.body.Password, user.Password)
 
             if (checkPass) {
-                const tokens = await generateAuthToken(admin.PKUserId);
+                const tokens = await generateAuthToken(user.PKUserId);
                 const refreshToken = tokens.refreshToken;
                 const session = await Session.build({
                     FKUserId: user.PKUserId,
@@ -100,7 +103,7 @@ const userSignIn = async (req, res) => {
                 res.status(200).json({ message: "Login Succesful", tokens: tokens });
             }
             else {
-                res.send({ message: "Your password is incorrect", value: checkPass, user: checkUser }).status(403)
+                res.send({ message: "Your password is incorrect" }).status(403)
             }
 
 
@@ -298,7 +301,98 @@ const logout = async (req, res) => {
     }
 }
 
+//get packages which that user has created
+const userPackages = async (req, res) => {
+    try {
+        const user = await req.user;
+        let id = user.PKUserId
+        let userPackages = await Package.findAll({
+            where: { FKUserId: id, IsDeleted: false },
+        })
+        res.status(200).send(userPackages)
+    } catch (e) {
+        res.status(400).send(e.message);
+    }
+}
 
+//get package by id which that user has created
+const userPackageById = async (req, res) => {
+    try {
+        const user = await req.user;
+        let id = user.PKUserId
+        let packageId = req.params.id
+        let userPackageById = await Package.findAll({
+            where: { PKPackageId: packageId, FKUserId: id, IsDeleted: false },
+        })
+        res.status(200).send(userPackageById)
+    } catch (e) {
+        res.status(400).send(e.message);
+    }
+}
+
+//get all subscriptions of that user packages
+const subscriptionsOfPackages = async (req, res) => {
+    try {
+        const user = await req.user;
+        let id = user.PKUserId
+        let subscriptionsOfPackages = await Package.findAll({
+            where: { FKUserId: id, IsDeleted: false },
+            attributes: [],
+            include: [{
+                model: Subscription,
+                where: { IsDeleted: false },
+            }]
+        })
+        res.status(200).send(subscriptionsOfPackages)
+    } catch (e) {
+        res.status(400).send(e.message);
+    }
+}
+
+//get all subscriptions of that user packages by package id
+const subscriptionByPackageId = async (req, res) => {
+    try {
+        const user = await req.user;
+        let id = user.PKUserId
+        let packageId = req.params.id
+        let subscriptionByPackageId = await Package.findAll({
+            where: { PKPackageId: packageId, FKUserId: id, IsDeleted: false },
+            attributes: [],
+            include: [{
+                model: Subscription,
+                where: { IsDeleted: false },
+            }]
+        })
+        res.status(200).send(subscriptionByPackageId)
+    } catch (e) {
+        res.status(400).send(e.message);
+    }
+}
+
+const customerBySubscriptionId = async (req, res) => {
+    try {
+        const user = await req.user;
+        let id = user.PKUserId
+        let subscriptionId = req.params.id
+        let customerBySubscriptionId = await Package.findAll({
+            where: { FKUserId: id, IsDeleted: false },
+            attributes: [],
+            include: [{
+                model: Subscription,
+                where: { PKSubscriptionId: subscriptionId, IsDeleted: false },
+                attributes:["FKCustomerId"],
+                include: [{
+                    model: Customer,
+                    where: { IsDeleted: false },
+                }]
+            }],
+            
+        })
+        res.status(200).send(customerBySubscriptionId)
+    } catch (e) {
+        res.status(400).send(e.message);
+    }
+}
 
 module.exports = {
     authenticateUser,
@@ -313,5 +407,11 @@ module.exports = {
     temporarySuspendUser,
     deleteUser,
     changePassword,
-    logout
+    logout,
+    userPackages,
+    userPackageById,
+    subscriptionsOfPackages,
+    subscriptionByPackageId,
+    customerBySubscriptionId
+
 }
