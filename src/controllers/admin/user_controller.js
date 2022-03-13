@@ -380,13 +380,13 @@ const customerBySubscriptionId = async (req, res) => {
             include: [{
                 model: Subscription,
                 where: { PKSubscriptionId: subscriptionId, IsDeleted: false },
-                attributes:["FKCustomerId"],
+                attributes: ["FKCustomerId"],
                 include: [{
                     model: Customer,
                     where: { IsDeleted: false },
                 }]
             }],
-            
+
         })
         res.status(200).send(customerBySubscriptionId)
     } catch (e) {
@@ -394,6 +394,24 @@ const customerBySubscriptionId = async (req, res) => {
     }
 }
 
+const packageBySubscriptionId = async (req, res) => {
+    try {
+        const user = await req.user;
+        let id = user.PKUserId
+        let subscriptionId = req.params.id
+        let packageBySubscriptionId = await Subscription.findAll({
+            where: { PKSubscriptionId: subscriptionId, IsDeleted: false },
+            attributes: [],
+            include: [{
+                model: Package,
+                where: { FKUserId: id, IsDeleted: false }
+            }],
+        })
+        res.status(200).send(packageBySubscriptionId)
+    } catch (e) {
+        res.status(400).send(e.message);
+    }
+}
 module.exports = {
     authenticateUser,
     generateAuthToken,
@@ -412,6 +430,7 @@ module.exports = {
     userPackageById,
     subscriptionsOfPackages,
     subscriptionByPackageId,
-    customerBySubscriptionId
+    customerBySubscriptionId,
+    packageBySubscriptionId
 
 }

@@ -24,6 +24,7 @@ router.get('/subscriptionByPackageId/:id',userController.authenticateUser,userCo
 
 router.get('/getCustomerBySubscriptionId/:id',userController.authenticateUser,userController.customerBySubscriptionId)
 
+router.get('/getPackageBySubscriptionId/:id',userController.authenticateUser,userController.packageBySubscriptionId)
 //customer
 router.post('/addCustomer',userController.authenticateUser,customerController.addCustomer)
 
