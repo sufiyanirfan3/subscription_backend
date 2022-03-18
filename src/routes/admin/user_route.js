@@ -4,6 +4,7 @@ const router = express.Router();
 const userController=require("../../controllers/admin/user_controller")
 const customerController=require("../../controllers/public/customer_controller")
 const packageController=require("../../controllers/admin/package_controller")
+const otpController=require("../../controllers/admin/otp_controller")
 
 router.post("/renewAccessToken", userController.renewAccessToken);
 
@@ -15,6 +16,7 @@ router.post('/changePassword',userController.authenticateUser,userController.cha
 
 router.post('/logout',userController.authenticateUser,userController.logout)
 
+router.post('/sendOtp',userController.authenticateUser,otpController.sendOtp)
 
 router.get('/userPackages',userController.authenticateUser,userController.userPackages)
 router.get('/userPackageById/:id',userController.authenticateUser,userController.userPackageById)

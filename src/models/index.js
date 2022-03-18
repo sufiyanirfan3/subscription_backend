@@ -10,7 +10,9 @@ db.sequelize = sequelize;
 
 db.admin = require("./admin")(sequelize, DataTypes);
 db.user = require("./user")(sequelize, DataTypes);
+db.contactUs = require("./contactUs")(sequelize, DataTypes);
 db.customer = require("./customer")(sequelize, DataTypes);
+db.otp = require("./otp")(sequelize, DataTypes);
 db.package = require("./package")(sequelize, DataTypes);
 db.subscription = require("./subscription")(sequelize, DataTypes);
 db.session = require("./session")(sequelize, DataTypes);

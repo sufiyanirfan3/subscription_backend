@@ -355,7 +355,7 @@ const subscriptionByPackageId = async (req, res) => {
         const user = await req.user;
         let id = user.PKUserId
         let packageId = req.params.id
-        let subscriptionByPackageId = await Package.findAll({
+        let subscriptionByPackageId = await Package.findOne({
             where: { PKPackageId: packageId, FKUserId: id, IsDeleted: false },
             attributes: [],
             include: [{
@@ -369,26 +369,59 @@ const subscriptionByPackageId = async (req, res) => {
     }
 }
 
+// const customerBySubscriptionId = async (req, res) => {
+//     try {
+//         const user = await req.user;
+//         let id = user.PKUserId
+//         let subscriptionId = req.params.id
+//         let customerBySubscriptionId = await Package.findAll({
+//             where: { FKUserId: id, IsDeleted: false },
+//             attributes: [],
+//             include: [{
+//                 model: Subscription,
+//                 where: { PKSubscriptionId: subscriptionId, IsDeleted: false },
+//                 attributes: ["FKCustomerId"],
+//                 include: [{
+//                     model: Customer,
+//                     where: { IsDeleted: false },
+//                 }],
+
+//             }],
+
+
+//         })
+//         res.status(200).send(customerBySubscriptionId)
+//     } catch (e) {
+//         res.status(400).send(e.message);
+//     }
+// }
+
 const customerBySubscriptionId = async (req, res) => {
     try {
         const user = await req.user;
         let id = user.PKUserId
         let subscriptionId = req.params.id
-        let customerBySubscriptionId = await Package.findAll({
-            where: { FKUserId: id, IsDeleted: false },
-            attributes: [],
-            include: [{
-                model: Subscription,
-                where: { PKSubscriptionId: subscriptionId, IsDeleted: false },
-                attributes: ["FKCustomerId"],
-                include: [{
-                    model: Customer,
-                    where: { IsDeleted: false },
-                }]
-            }],
-
+        const subscription = await Subscription.findOne({
+            where: { PKSubscriptionId: subscriptionId, IsDeleted: false }
         })
-        res.status(200).send(customerBySubscriptionId)
+        if (!subscription) {
+            res.status(404).send("unvalid subscription id")
+        }
+        else {
+            const package = await Package.findOne({
+                where: { PKPackageId: subscription.FKPackageId, FKUserId: id, IsDeleted: false }
+            })
+            if (!package) {
+                res.status(404).send("unvalid user")
+            }
+            else {
+                const customer = await Customer.findOne({
+                    where: { PKCustomerId: subscription.FKCustomerId, IsDeleted: false }
+                })
+
+                res.status(200).send(customer)
+            }
+        }
     } catch (e) {
         res.status(400).send(e.message);
     }
@@ -412,6 +445,7 @@ const packageBySubscriptionId = async (req, res) => {
         res.status(400).send(e.message);
     }
 }
+
 module.exports = {
     authenticateUser,
     generateAuthToken,

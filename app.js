@@ -15,6 +15,8 @@ app.use("/user", require("./src/routes/admin/package_route"));
 app.use("/user", require("./src/routes/admin/subscription_route"));
 app.use("/customer", require("./src/routes/public/customer_route"));
 
+app.use("/public", require("./src/routes/public/contactUs_route"));
+
 // Test DB
 db.authenticate()
     .then(() => console.log('Database connected...'))
