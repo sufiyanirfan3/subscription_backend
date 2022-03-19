@@ -17,6 +17,7 @@ router.post('/changePassword',userController.authenticateUser,userController.cha
 router.post('/logout',userController.authenticateUser,userController.logout)
 
 router.post('/sendOtp',userController.authenticateUser,otpController.sendOtp)
+router.post('/verifySubscription',userController.authenticateUser,otpController.verifySubscription)
 
 router.get('/userPackages',userController.authenticateUser,userController.userPackages)
 router.get('/userPackageById/:id',userController.authenticateUser,userController.userPackageById)

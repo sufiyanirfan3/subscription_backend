@@ -7,7 +7,6 @@ const addSubscription = async (req, res) => {
                 let info = {
                         FKCustomerID: req.body.FKCustomerID,
                         FKPackageID: req.body.FKPackageID,
-                        PKSubscriptionId: this.FKCustomerID + this.FKPackageID
                 }
                 const subscription = await Subscription.create(info)
                 res.status(200).send(subscription)
